@@ -1,0 +1,75 @@
+@startuml
+!theme plain
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Entities" {
+
+  class Etudiant {
+    - id: Long
+    - matricule: String
+    - nom: String
+    - prenom: String
+    - email: String
+    - telephone: String
+    - dateNaissance: LocalDate
+    - adresse: String
+  }
+
+  class Professeur {
+    - id: Long
+    - numeroEmploye: String
+    - nom: String
+    - prenom: String
+    - email: String
+    - telephone: String
+    - specialite: String
+  }
+
+  class Cours {
+    - id: Long
+    - code: String
+    - nom: String
+    - credits: Integer
+    - description: String
+  }
+
+  class Salle {
+    - id: Long
+    - code: String
+    - nom: String
+    - capacite: Integer
+    - batiment: String
+  }
+
+  class Inscription {
+    - id: Long
+    - dateInscription: LocalDate
+  }
+
+  class Note {
+    - id: Long
+    - valeur: Double
+    - coefficient: Double
+    - type: String
+    - dateSaisie: LocalDate
+  }
+
+  class Grade {
+    - id: Long
+    - valeurFinale: Double
+    - mention: String
+    - dateValidation: LocalDate
+  }
+
+}
+
+Etudiant "1" -- "*" Inscription : s'inscrit >
+Inscription "*" -- "1" Cours : concerne >
+Cours "*" -- "1" Professeur : enseigné par >
+Cours "*" -- "1" Salle : a lieu dans >
+Inscription "1" -- "*" Note : contient >
+Inscription "1" -- "1" Grade : a pour résultat >
+
+@enduml
