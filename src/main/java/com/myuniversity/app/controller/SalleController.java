@@ -1,7 +1,8 @@
 package com.myuniversity.app.controller;
 
-import com.myuniversity.app.entity.Salle;
+import com.myuniversity.app.dto.SalleDTO;
 import com.myuniversity.app.service.SalleService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,27 +20,29 @@ public class SalleController {
     }
 
     @GetMapping
-    public List<Salle> getAll() {
-        return service.findAll();
+    public List<SalleDTO> getAll() {
+        return service.findAll().stream()
+                .map(SalleDTO::fromEntity)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Salle> getById(@PathVariable Long id) {
+    public ResponseEntity<SalleDTO> getById(@PathVariable Long id) {
         return service.findById(id)
-                .map(ResponseEntity::ok)
+                .map(e -> ResponseEntity.ok(SalleDTO.fromEntity(e)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Salle> create(@RequestBody Salle salle) {
-        Salle saved = service.save(salle);
+    public ResponseEntity<SalleDTO> create(@Valid @RequestBody SalleDTO dto) {
+        SalleDTO saved = SalleDTO.fromEntity(service.save(dto.toEntity()));
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Salle> update(@PathVariable Long id, @RequestBody Salle salle) {
+    public ResponseEntity<SalleDTO> update(@PathVariable Long id, @Valid @RequestBody SalleDTO dto) {
         try {
-            Salle updated = service.update(id, salle);
+            SalleDTO updated = SalleDTO.fromEntity(service.update(id, dto.toEntity()));
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -49,7 +52,7 @@ public class SalleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return service.findById(id)
-                .map(existing -> {
+                .map(e -> {
                     service.delete(id);
                     return ResponseEntity.noContent().<Void>build();
                 })
