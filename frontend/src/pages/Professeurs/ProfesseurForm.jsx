@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProfesseur, createProfesseur, updateProfesseur } from '../../api/professeurs';
+import { useToast } from '../../components/Toast';
 
 export default function ProfesseurForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [form, setForm] = useState({
     numeroEmploye: '', nom: '', prenom: '', email: '', telephone: '', specialite: '',
   });
@@ -36,8 +38,15 @@ export default function ProfesseurForm() {
     setError('');
     const request = isEdit ? updateProfesseur(id, form) : createProfesseur(form);
     request
-      .then(() => navigate('/professeurs'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Professeur modifié avec succès' : 'Professeur créé avec succès');
+        navigate('/professeurs');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getGrade, createGrade, updateGrade } from '../../api/grades';
 import { getInscriptions } from '../../api/inscriptions';
+import { useToast } from '../../components/Toast';
 
 export default function GradeForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [inscriptions, setInscriptions] = useState([]);
   const [form, setForm] = useState({
     valeurFinale: '', mention: '', dateValidation: '', inscriptionId: '',
@@ -38,8 +40,15 @@ export default function GradeForm() {
     const payload = { ...form, valeurFinale: Number(form.valeurFinale) };
     const request = isEdit ? updateGrade(id, payload) : createGrade(payload);
     request
-      .then(() => navigate('/grades'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Grade modifié avec succès' : 'Grade créé avec succès');
+        navigate('/grades');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (

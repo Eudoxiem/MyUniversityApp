@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getCour, createCour, updateCour } from '../../api/cours';
 import { getProfesseurs } from '../../api/professeurs';
 import { getSalles } from '../../api/salles';
+import { useToast } from '../../components/Toast';
 
 export default function CoursForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [professeurs, setProfesseurs] = useState([]);
   const [salles, setSalles] = useState([]);
   const [form, setForm] = useState({
@@ -43,8 +45,15 @@ export default function CoursForm() {
     const payload = { ...form, credits: Number(form.credits) };
     const request = isEdit ? updateCour(id, payload) : createCour(payload);
     request
-      .then(() => navigate('/cours'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Cours modifié avec succès' : 'Cours créé avec succès');
+        navigate('/cours');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (

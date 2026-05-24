@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getNote, createNote, updateNote } from '../../api/notes';
 import { getInscriptions } from '../../api/inscriptions';
+import { useToast } from '../../components/Toast';
 
 export default function NoteForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [inscriptions, setInscriptions] = useState([]);
   const [form, setForm] = useState({
     valeur: '', coefficient: '1', type: 'CC', dateSaisie: new Date().toISOString().split('T')[0], inscriptionId: '',
@@ -39,8 +41,15 @@ export default function NoteForm() {
     const payload = { ...form, valeur: Number(form.valeur), coefficient: Number(form.coefficient) };
     const request = isEdit ? updateNote(id, payload) : createNote(payload);
     request
-      .then(() => navigate('/notes'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Note modifiée avec succès' : 'Note créée avec succès');
+        navigate('/notes');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (

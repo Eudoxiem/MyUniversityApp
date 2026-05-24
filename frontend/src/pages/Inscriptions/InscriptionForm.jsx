@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getInscription, createInscription, updateInscription } from '../../api/inscriptions';
 import { getEtudiants } from '../../api/etudiants';
 import { getCours } from '../../api/cours';
+import { useToast } from '../../components/Toast';
 
 export default function InscriptionForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [etudiants, setEtudiants] = useState([]);
   const [cours, setCours] = useState([]);
   const [form, setForm] = useState({
@@ -39,8 +41,15 @@ export default function InscriptionForm() {
     setError('');
     const request = isEdit ? updateInscription(id, form) : createInscription(form);
     request
-      .then(() => navigate('/inscriptions'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Inscription modifiée avec succès' : 'Inscription créée avec succès');
+        navigate('/inscriptions');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (

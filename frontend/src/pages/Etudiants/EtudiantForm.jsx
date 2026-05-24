@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getEtudiant, createEtudiant, updateEtudiant } from '../../api/etudiants';
+import { useToast } from '../../components/Toast';
 
 export default function EtudiantForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [form, setForm] = useState({
     matricule: '', nom: '', prenom: '', email: '', telephone: '', dateNaissance: '', adresse: '',
   });
@@ -39,9 +41,14 @@ export default function EtudiantForm() {
     setError('');
     const request = isEdit ? updateEtudiant(id, form) : createEtudiant(form);
     request
-      .then(() => navigate('/etudiants'))
+      .then(() => {
+        toast(isEdit ? 'Étudiant modifié avec succès' : 'Étudiant créé avec succès');
+        navigate('/etudiants');
+      })
       .catch((err) => {
-        setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement');
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
       });
   };
 

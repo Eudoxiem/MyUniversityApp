@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastProvider } from './components/Toast';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import EtudiantList from './pages/Etudiants/EtudiantList';
@@ -19,6 +20,7 @@ import GradeForm from './pages/Grades/GradeForm';
 export default function App() {
   return (
     <BrowserRouter>
+      <ToastProvider>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
@@ -45,6 +47,7 @@ export default function App() {
           <Route path="/grades/:id" element={<GradeForm />} />
         </Route>
       </Routes>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

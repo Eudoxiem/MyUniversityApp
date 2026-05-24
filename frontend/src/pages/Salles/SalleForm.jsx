@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getSalle, createSalle, updateSalle } from '../../api/salles';
+import { useToast } from '../../components/Toast';
 
 export default function SalleForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const toast = useToast();
   const [form, setForm] = useState({
     code: '', nom: '', capacite: '', batiment: '',
   });
@@ -35,8 +37,15 @@ export default function SalleForm() {
     const payload = { ...form, capacite: Number(form.capacite) };
     const request = isEdit ? updateSalle(id, payload) : createSalle(payload);
     request
-      .then(() => navigate('/salles'))
-      .catch((err) => setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement'));
+      .then(() => {
+        toast(isEdit ? 'Salle modifiée avec succès' : 'Salle créée avec succès');
+        navigate('/salles');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || 'Erreur lors de l\'enregistrement';
+        setError(msg);
+        toast(msg, 'error');
+      });
   };
 
   return (
