@@ -13,3 +13,7 @@ target/
 *.swp
 *~
 .DS_Store
+
+# Fichiers de configuration locale (contiennent des mots de passe)
+application-mysql.properties
+application-postgres.properties
