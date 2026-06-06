@@ -63,7 +63,80 @@ package "Entities" {
     - dateValidation: LocalDate
   }
 
+  class Paiement {
+    - id: Long
+    - reference: String
+    - montant: Double
+    - datePaiement: LocalDate
+    - dateEcheance: LocalDate
+    - description: String
+  }
+
+  class EmploiDuTemps {
+    - id: Long
+    - heureDebut: LocalTime
+    - heureFin: LocalTime
+    - semestre: String
+    - anneeAcademique: String
+  }
+
+  class Fichier {
+    - id: Long
+    - nomOriginal: String
+    - nomStockage: String
+    - chemin: String
+    - typeMime: String
+    - taille: Long
+    - dateUpload: LocalDateTime
+    - entiteId: Long
+    - entiteType: String
+  }
+
+  class User {
+    - id: Long
+    - email: String
+    - password: String
+    - nom: String
+    - prenom: String
+    - actif: Boolean
+  }
+
 }
+
+package "Enums" {
+
+  enum Role {
+    ROLE_ADMIN
+    ROLE_PROFESSEUR
+    ROLE_ETUDIANT
+  }
+
+  enum ModePaiement {
+    ESPECES
+    VIREMENT
+    CHEQUE
+    CARTE_BANCAIRE
+  }
+
+  enum StatutPaiement {
+    EN_ATTENTE
+    PAYE
+    EN_RETARD
+    ANNULE
+  }
+
+  enum JourSemaine {
+    LUNDI
+    MARDI
+    MERCREDI
+    JEUDI
+    VENDREDI
+    SAMEDI
+  }
+
+}
+
+' ---- Relations ----
 
 Etudiant "1" -- "*" Inscription : s'inscrit >
 Inscription "*" -- "1" Cours : concerne >
@@ -71,5 +144,16 @@ Cours "*" -- "1" Professeur : enseigné par >
 Cours "*" -- "1" Salle : a lieu dans >
 Inscription "1" -- "*" Note : contient >
 Inscription "1" -- "1" Grade : a pour résultat >
+
+Paiement "*" -- "1" Etudiant : effectué par >
+Paiement "1" -- ModePaiement : mode >
+Paiement "1" -- StatutPaiement : statut >
+
+EmploiDuTemps "*" -- "1" Cours : planifie >
+EmploiDuTemps "*" -- "1" Salle : occupe >
+EmploiDuTemps "*" -- "1" Professeur : attribué à >
+EmploiDuTemps "1" -- JourSemaine : jour >
+
+User "1" -- Role : possède >
 
 @enduml
