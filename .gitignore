@@ -17,3 +17,6 @@ target/
 # Fichiers de configuration locale (contiennent des mots de passe)
 application-mysql.properties
 application-postgres.properties
+
+# Certificat SSL auto-signé (développement)
+keystore/
