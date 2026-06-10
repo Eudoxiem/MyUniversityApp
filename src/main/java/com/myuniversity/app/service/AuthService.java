@@ -50,7 +50,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             log.warn("Tentative d'inscription avec un email existant: {}", request.getEmail());
-            throw new RuntimeException("Un utilisateur avec cet email existe déjà");
+            throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
         User user = User.builder()
