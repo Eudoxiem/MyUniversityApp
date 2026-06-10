@@ -21,6 +21,8 @@ import GradeList from './pages/Grades/GradeList';
 import GradeForm from './pages/Grades/GradeForm';
 import PaiementList from './pages/Paiements/PaiementList';
 import PaiementForm from './pages/Paiements/PaiementForm';
+import EmploiDuTempsList from './pages/EmploiDuTemps/EmploiDuTempsList';
+import EmploiDuTempsForm from './pages/EmploiDuTemps/EmploiDuTempsForm';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -67,6 +69,9 @@ export default function App() {
           <Route path="/paiements" element={<PaiementList />} />
           <Route path="/paiements/nouveau" element={<PaiementForm />} />
           <Route path="/paiements/:id" element={<PaiementForm />} />
+          <Route path="/emploi-du-temps" element={<EmploiDuTempsList />} />
+          <Route path="/emploi-du-temps/nouveau" element={<EmploiDuTempsForm />} />
+          <Route path="/emploi-du-temps/:id" element={<EmploiDuTempsForm />} />
         </Route>
       </Routes>
       </ToastProvider>
