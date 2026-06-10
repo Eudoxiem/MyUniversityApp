@@ -13,6 +13,7 @@ const links = [
   { to: '/grades', label: 'Grades' },
   { to: '/paiements', label: 'Paiements' },
   { to: '/emploi-du-temps', label: 'Emploi du temps' },
+  { to: '/fichiers', label: 'Fichiers' },
 ];
 
 export default function Sidebar() {

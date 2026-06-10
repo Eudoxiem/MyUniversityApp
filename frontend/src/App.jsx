@@ -23,6 +23,7 @@ import PaiementList from './pages/Paiements/PaiementList';
 import PaiementForm from './pages/Paiements/PaiementForm';
 import EmploiDuTempsList from './pages/EmploiDuTemps/EmploiDuTempsList';
 import EmploiDuTempsForm from './pages/EmploiDuTemps/EmploiDuTempsForm';
+import FichierList from './pages/Fichiers/FichierList';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/emploi-du-temps" element={<EmploiDuTempsList />} />
           <Route path="/emploi-du-temps/nouveau" element={<EmploiDuTempsForm />} />
           <Route path="/emploi-du-temps/:id" element={<EmploiDuTempsForm />} />
+          <Route path="/fichiers" element={<FichierList />} />
         </Route>
       </Routes>
       </ToastProvider>
