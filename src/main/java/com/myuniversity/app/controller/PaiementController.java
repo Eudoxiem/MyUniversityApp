@@ -3,6 +3,7 @@ package com.myuniversity.app.controller;
 import com.myuniversity.app.dto.PaiementDTO;
 import com.myuniversity.app.service.PaiementService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/paiements")
 public class PaiementController {
@@ -60,8 +62,10 @@ public class PaiementController {
         try {
             PaiementDTO saved = PaiementDTO.fromEntity(
                     paiementService.save(dto.toEntity(), dto.getEtudiantId()));
+            log.info("Paiement créé - id: {}, étudiantId: {}, montant: {}", saved.getId(), dto.getEtudiantId(), saved.getMontant());
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (RuntimeException e) {
+            log.warn("Échec création paiement - étudiantId: {}", dto.getEtudiantId());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -71,8 +75,10 @@ public class PaiementController {
     public ResponseEntity<PaiementDTO> update(@PathVariable Long id, @Valid @RequestBody PaiementDTO dto) {
         try {
             PaiementDTO updated = PaiementDTO.fromEntity(paiementService.update(id, dto.toEntity()));
+            log.info("Paiement modifié - id: {}", id);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
+            log.warn("Paiement non trouvé pour modification - id: {}", id);
             return ResponseEntity.notFound().build();
         }
     }
@@ -83,8 +89,10 @@ public class PaiementController {
         try {
             paiementService.findById(id);
             paiementService.delete(id);
+            log.info("Paiement supprimé - id: {}", id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            log.warn("Paiement non trouvé pour suppression - id: {}", id);
             return ResponseEntity.notFound().build();
         }
     }

@@ -2,6 +2,7 @@ package com.myuniversity.app.controller;
 
 import com.myuniversity.app.dto.FichierDTO;
 import com.myuniversity.app.service.FileUploadService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/fichiers")
 public class FileUploadController {
@@ -74,10 +76,12 @@ public class FileUploadController {
             contentType = "application/octet-stream";
         }
 
+        String safeFilename = fileUploadService.getFichier(id).getNomOriginal()
+                .replaceAll("[\"\\r\\n]", "_");
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + fileUploadService.getFichier(id).getNomOriginal() + "\"")
+                        "attachment; filename=\"" + safeFilename + "\"")
                 .body(resource);
     }
 

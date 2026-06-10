@@ -4,13 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -21,8 +24,11 @@ public class JwtService {
     private long expiration;
 
     public String generateToken(String email, Map<String, Object> extraClaims) {
+        String jti = UUID.randomUUID().toString();
+        log.info("Génération de token - email: {}, jti: {}", email, jti);
         return Jwts.builder()
                 .claims(extraClaims)
+                .id(jti)
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
@@ -32,6 +38,14 @@ public class JwtService {
 
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractTokenId(String token) {
+        return extractAllClaims(token).getId();
+    }
+
+    public Date extractExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
     }
 
     public boolean isTokenValid(String token) {

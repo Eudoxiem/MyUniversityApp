@@ -3,6 +3,7 @@ package com.myuniversity.app.controller;
 import com.myuniversity.app.dto.EmploiDuTempsDTO;
 import com.myuniversity.app.service.EmploiDuTempsService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/emploi-du-temps")
 public class EmploiDuTempsController {
@@ -75,8 +77,10 @@ public class EmploiDuTempsController {
         try {
             EmploiDuTempsDTO saved = EmploiDuTempsDTO.fromEntity(
                     edtService.save(dto.toEntity(), dto.getCoursId(), dto.getSalleId(), dto.getProfesseurId()));
+            log.info("Emploi du temps créé - id: {}, coursId: {}", saved.getId(), dto.getCoursId());
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (RuntimeException e) {
+            log.warn("Échec création emploi du temps");
             return ResponseEntity.badRequest().build();
         }
     }
@@ -86,8 +90,10 @@ public class EmploiDuTempsController {
     public ResponseEntity<EmploiDuTempsDTO> update(@PathVariable Long id, @Valid @RequestBody EmploiDuTempsDTO dto) {
         try {
             EmploiDuTempsDTO updated = EmploiDuTempsDTO.fromEntity(edtService.update(id, dto.toEntity()));
+            log.info("Emploi du temps modifié - id: {}", id);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
+            log.warn("Emploi du temps non trouvé pour modification - id: {}", id);
             return ResponseEntity.notFound().build();
         }
     }
@@ -98,8 +104,10 @@ public class EmploiDuTempsController {
         try {
             edtService.findById(id);
             edtService.delete(id);
+            log.info("Emploi du temps supprimé - id: {}", id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            log.warn("Emploi du temps non trouvé pour suppression - id: {}", id);
             return ResponseEntity.notFound().build();
         }
     }

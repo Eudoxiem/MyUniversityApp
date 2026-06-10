@@ -1,9 +1,8 @@
 package com.myuniversity.app.dto.auth;
 
-import com.myuniversity.app.entity.Role;
+import com.myuniversity.app.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
@@ -16,6 +15,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Le mot de passe est obligatoire")
+    @ValidPassword
     private String password;
 
     @NotBlank(message = "Le nom est obligatoire")
@@ -23,7 +23,4 @@ public class RegisterRequest {
 
     @NotBlank(message = "Le prénom est obligatoire")
     private String prenom;
-
-    @NotNull(message = "Le rôle est obligatoire")
-    private Role role;
 }
