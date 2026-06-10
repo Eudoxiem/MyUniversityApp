@@ -3,6 +3,8 @@ package com.myuniversity.app.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "users")
 @Getter @Setter
@@ -33,4 +35,10 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private Boolean actif = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private int tentativesEchouees = 0;
+
+    private Instant dateVerrouillage;
 }

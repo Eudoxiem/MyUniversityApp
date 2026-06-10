@@ -71,21 +71,49 @@ public class AuthService {
         return buildAuthResponse(user, token, refreshToken.getToken());
     }
 
+    private static final int MAX_TENTATIVES = 5;
+    private static final int DUREE_VERROUILLAGE_MINUTES = 15;
+
     public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+
+        if (user != null && user.getDateVerrouillage() != null) {
+            if (Instant.now().isBefore(user.getDateVerrouillage())) {
+                log.warn("Tentative sur compte verrouillé - email: {}", request.getEmail());
+                throw new RuntimeException("Compte temporairement verrouillé. Réessayez dans 15 minutes.");
+            }
+            user.setDateVerrouillage(null);
+            user.setTentativesEchouees(0);
+        }
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (Exception e) {
+            if (user != null) {
+                user.setTentativesEchouees(user.getTentativesEchouees() + 1);
+                if (user.getTentativesEchouees() >= MAX_TENTATIVES) {
+                    user.setDateVerrouillage(Instant.now().plusSeconds(DUREE_VERROUILLAGE_MINUTES * 60));
+                    log.warn("Compte verrouillé après {} tentatives - email: {}", MAX_TENTATIVES, request.getEmail());
+                }
+                userRepository.save(user);
+            }
             log.warn("Tentative de connexion échouée - email: {}", request.getEmail());
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> {
-                    log.warn("Utilisateur non trouvé après authentification - email: {}", request.getEmail());
-                    return new RuntimeException("Email ou mot de passe incorrect");
-                });
+        if (user == null) {
+            user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> {
+                        log.warn("Utilisateur non trouvé après authentification - email: {}", request.getEmail());
+                        return new RuntimeException("Email ou mot de passe incorrect");
+                    });
+        }
+
+        user.setTentativesEchouees(0);
+        user.setDateVerrouillage(null);
+        userRepository.save(user);
 
         log.info("Connexion réussie - email: {}, rôle: {}", user.getEmail(), user.getRole());
 
