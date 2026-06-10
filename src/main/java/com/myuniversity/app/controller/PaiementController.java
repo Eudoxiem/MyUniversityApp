@@ -1,6 +1,9 @@
 package com.myuniversity.app.controller;
 
 import com.myuniversity.app.dto.PaiementDTO;
+import com.myuniversity.app.dto.paiement.PaymentIntentResponse;
+import com.myuniversity.app.entity.Paiement;
+import com.myuniversity.app.service.OnlinePaymentService;
 import com.myuniversity.app.service.PaiementService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +20,11 @@ import java.util.List;
 public class PaiementController {
 
     private final PaiementService paiementService;
+    private final OnlinePaymentService onlinePaymentService;
 
-    public PaiementController(PaiementService paiementService) {
+    public PaiementController(PaiementService paiementService, OnlinePaymentService onlinePaymentService) {
         this.paiementService = paiementService;
+        this.onlinePaymentService = onlinePaymentService;
     }
 
     @GetMapping
@@ -80,6 +85,27 @@ public class PaiementController {
         } catch (RuntimeException e) {
             log.warn("Paiement non trouvé pour modification - id: {}", id);
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/payer-en-ligne")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ETUDIANT')")
+    public ResponseEntity<PaymentIntentResponse> initierPaiementEnLigne(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(onlinePaymentService.initierPaiement(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/confirmer-paiement")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ETUDIANT')")
+    public ResponseEntity<PaiementDTO> confirmerPaiement(@RequestParam String paymentIntentId) {
+        try {
+            Paiement paiement = onlinePaymentService.confirmerPaiement(paymentIntentId);
+            return ResponseEntity.ok(PaiementDTO.fromEntity(paiement));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

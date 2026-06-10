@@ -42,6 +42,8 @@ public class PaiementDTO {
 
     private String description;
 
+    private String paymentIntentId;
+
     public static PaiementDTO fromEntity(Paiement paiement) {
         return PaiementDTO.builder()
                 .id(paiement.getId())
@@ -54,6 +56,7 @@ public class PaiementDTO {
                 .modePaiement(paiement.getModePaiement())
                 .statut(paiement.getStatut())
                 .description(paiement.getDescription())
+                .paymentIntentId(paiement.getPaymentIntentId())
                 .build();
     }
 

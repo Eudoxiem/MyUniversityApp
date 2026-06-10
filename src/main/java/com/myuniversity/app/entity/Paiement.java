@@ -41,4 +41,6 @@ public class Paiement {
     private StatutPaiement statut = StatutPaiement.EN_ATTENTE;
 
     private String description;
+
+    private String paymentIntentId;
 }
