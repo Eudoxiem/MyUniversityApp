@@ -19,6 +19,8 @@ import NoteList from './pages/Notes/NoteList';
 import NoteForm from './pages/Notes/NoteForm';
 import GradeList from './pages/Grades/GradeList';
 import GradeForm from './pages/Grades/GradeForm';
+import PaiementList from './pages/Paiements/PaiementList';
+import PaiementForm from './pages/Paiements/PaiementForm';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -62,6 +64,9 @@ export default function App() {
           <Route path="/grades" element={<GradeList />} />
           <Route path="/grades/nouveau" element={<GradeForm />} />
           <Route path="/grades/:id" element={<GradeForm />} />
+          <Route path="/paiements" element={<PaiementList />} />
+          <Route path="/paiements/nouveau" element={<PaiementForm />} />
+          <Route path="/paiements/:id" element={<PaiementForm />} />
         </Route>
       </Routes>
       </ToastProvider>

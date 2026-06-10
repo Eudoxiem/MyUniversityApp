@@ -437,3 +437,12 @@ table tr:hover {
 .btn-logout:hover {
   background: rgba(255,255,255,0.2);
 }
+
+.statut-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+}

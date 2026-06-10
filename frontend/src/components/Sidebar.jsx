@@ -11,6 +11,7 @@ const links = [
   { to: '/inscriptions', label: 'Inscriptions' },
   { to: '/notes', label: 'Notes' },
   { to: '/grades', label: 'Grades' },
+  { to: '/paiements', label: 'Paiements' },
 ];
 
 export default function Sidebar() {
