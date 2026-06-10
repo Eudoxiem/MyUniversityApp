@@ -2,6 +2,7 @@ package com.myuniversity.app.controller;
 
 import com.myuniversity.app.dto.auth.AuthResponse;
 import com.myuniversity.app.dto.auth.LoginRequest;
+import com.myuniversity.app.dto.auth.RefreshTokenRequest;
 import com.myuniversity.app.dto.auth.RegisterRequest;
 import com.myuniversity.app.service.AuthService;
 import jakarta.validation.Valid;
@@ -47,5 +48,15 @@ public class AuthController {
             authService.logout(authHeader.substring(7));
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            AuthResponse response = authService.refresh(request.getRefreshToken());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

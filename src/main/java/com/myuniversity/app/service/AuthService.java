@@ -3,6 +3,7 @@ package com.myuniversity.app.service;
 import com.myuniversity.app.dto.auth.AuthResponse;
 import com.myuniversity.app.dto.auth.LoginRequest;
 import com.myuniversity.app.dto.auth.RegisterRequest;
+import com.myuniversity.app.entity.RefreshToken;
 import com.myuniversity.app.entity.Role;
 import com.myuniversity.app.entity.TokenInvalide;
 import com.myuniversity.app.entity.User;
@@ -30,17 +31,20 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TokenInvalideRepository tokenInvalideRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
                        AuthenticationManager authenticationManager,
-                       TokenInvalideRepository tokenInvalideRepository) {
+                       TokenInvalideRepository tokenInvalideRepository,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.tokenInvalideRepository = tokenInvalideRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -62,8 +66,9 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail(),
                 Map.of("role", user.getRole().name()));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-        return buildAuthResponse(user, token);
+        return buildAuthResponse(user, token, refreshToken.getToken());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -86,14 +91,40 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail(),
                 Map.of("role", user.getRole().name()));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-        return buildAuthResponse(user, token);
+        return buildAuthResponse(user, token, refreshToken.getToken());
+    }
+
+    public AuthResponse refresh(String refreshTokenValue) {
+        RefreshToken stored = refreshTokenService.findByToken(refreshTokenValue)
+                .orElseThrow(() -> {
+                    log.warn("Refresh token introuvable");
+                    return new RuntimeException("Refresh token invalide");
+                });
+
+        refreshTokenService.verifyExpiration(stored);
+
+        User user = stored.getUser();
+        refreshTokenService.revokeAllUserTokens(user.getId());
+
+        String newToken = jwtService.generateToken(user.getEmail(),
+                Map.of("role", user.getRole().name()));
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+
+        log.info("Token rafraîchi - email: {}", user.getEmail());
+        return buildAuthResponse(user, newToken, newRefreshToken.getToken());
     }
 
     public void logout(String token) {
         String jti = jwtService.extractTokenId(token);
         String email = jwtService.extractEmail(token);
         Date expiration = jwtService.extractExpiration(token);
+
+        userRepository.findByEmail(email).ifPresent(user ->
+                refreshTokenService.revokeAllUserTokens(user.getId())
+        );
+
         tokenInvalideRepository.findByJti(jti).orElseGet(() -> {
             log.info("Déconnexion - email: {}, jti: {}", email, jti);
             return tokenInvalideRepository.save(TokenInvalide.builder()
@@ -105,9 +136,10 @@ public class AuthService {
         tokenInvalideRepository.deleteByDateExpirationBefore(Instant.now());
     }
 
-    private AuthResponse buildAuthResponse(User user, String token) {
+    private AuthResponse buildAuthResponse(User user, String token, String refreshToken) {
         return AuthResponse.builder()
                 .token(token)
+                .refreshToken(refreshToken)
                 .userId(user.getId())
                 .email(user.getEmail())
                 .nom(user.getNom())
