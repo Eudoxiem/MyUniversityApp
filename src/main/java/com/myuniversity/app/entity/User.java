@@ -34,7 +34,7 @@ public class User {
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean actif = true;
+    private Boolean actif = false;
 
     @Column(nullable = false)
     @Builder.Default

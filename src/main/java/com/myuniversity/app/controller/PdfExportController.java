@@ -20,7 +20,7 @@ public class PdfExportController {
     }
 
     @GetMapping("/bulletin/{etudiantId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietaireEtudiant(#etudiantId)")
     public ResponseEntity<byte[]> exportBulletin(@PathVariable Long etudiantId) {
         try {
             byte[] pdf = pdfExportService.exportBulletin(etudiantId);

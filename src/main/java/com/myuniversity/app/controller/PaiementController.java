@@ -31,7 +31,7 @@ public class PaiementController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietairePaiement(#id)")
     public ResponseEntity<PaiementDTO> getById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(PaiementDTO.fromEntity(paiementService.findById(id)));
@@ -41,7 +41,7 @@ public class PaiementController {
     }
 
     @GetMapping("/etudiant/{etudiantId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietairePaiementByEtudiant(#etudiantId)")
     public List<PaiementDTO> getByEtudiant(@PathVariable Long etudiantId) {
         return paiementService.findByEtudiantId(etudiantId).stream()
                 .map(PaiementDTO::fromEntity)

@@ -31,7 +31,7 @@ public class EtudiantController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietaireEtudiant(#id)")
     public ResponseEntity<EtudiantDTO> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(e -> ResponseEntity.ok(EtudiantDTO.fromEntity(e)))

@@ -38,7 +38,7 @@ public class InscriptionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietaireInscription(#id)")
     public ResponseEntity<InscriptionDTO> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(e -> ResponseEntity.ok(InscriptionDTO.fromEntity(e)))

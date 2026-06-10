@@ -35,7 +35,7 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR') or @securityHelper.estProprietaireNote(#id)")
     public ResponseEntity<NoteDTO> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(e -> ResponseEntity.ok(NoteDTO.fromEntity(e)))
