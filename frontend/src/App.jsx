@@ -1,7 +1,10 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/Toast';
 import Layout from './components/Layout';
+import { useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
+import LoginPage from './pages/Auth/LoginPage';
+import RegisterPage from './pages/Auth/RegisterPage';
 import EtudiantList from './pages/Etudiants/EtudiantList';
 import EtudiantForm from './pages/Etudiants/EtudiantForm';
 import ProfesseurList from './pages/Professeurs/ProfesseurList';
@@ -17,12 +20,26 @@ import NoteForm from './pages/Notes/NoteForm';
 import GradeList from './pages/Grades/GradeList';
 import GradeForm from './pages/Grades/GradeForm';
 
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading">Chargement...</div>;
+  return user ? children : <Navigate to="/login" replace />;
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading">Chargement...</div>;
+  return user ? <Navigate to="/" replace /> : children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ToastProvider>
       <Routes>
-        <Route element={<Layout />}>
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/etudiants" element={<EtudiantList />} />
           <Route path="/etudiants/nouveau" element={<EtudiantForm />} />
