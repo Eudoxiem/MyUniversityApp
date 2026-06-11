@@ -379,6 +379,78 @@ table tr:hover {
   font-weight: 500;
 }
 
+.search-form .form-row {
+  align-items: end;
+}
+
+.search-form .form-group {
+  margin-bottom: 0;
+}
+
+.page-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #1a237e;
+  border: 1px solid #1a237e;
+}
+
+.btn-outline:hover {
+  background: #1a237e;
+  color: #fff;
+}
+
+.appel-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: #2e7d32;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
 .auth-card .btn-block {
   width: 100%;
   justify-content: center;
@@ -445,4 +517,21 @@ table tr:hover {
   color: #fff;
   font-size: 0.8rem;
   font-weight: 500;
+}
+
+.badge-success { background: #2e7d32; }
+.badge-error { background: #c62828; }
+.badge-info { background: #1565c0; }
+
+.sidebar-section {
+  padding: 16px 20px 4px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+}
+
+.text-muted {
+  color: #999;
+  font-size: 0.85rem;
 }

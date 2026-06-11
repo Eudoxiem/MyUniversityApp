@@ -24,6 +24,12 @@ import PaiementForm from './pages/Paiements/PaiementForm';
 import EmploiDuTempsList from './pages/EmploiDuTemps/EmploiDuTempsList';
 import EmploiDuTempsForm from './pages/EmploiDuTemps/EmploiDuTempsForm';
 import FichierList from './pages/Fichiers/FichierList';
+import PresenceList from './pages/Presences/PresenceList';
+import PresenceForm from './pages/Presences/PresenceForm';
+import PresenceAppel from './pages/Presences/PresenceAppel';
+import AdminUsers from './pages/Admin/AdminUsers';
+import AdminUserForm from './pages/Admin/AdminUserForm';
+import AuditLogs from './pages/Admin/AuditLogs';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -74,6 +80,14 @@ export default function App() {
           <Route path="/emploi-du-temps/nouveau" element={<EmploiDuTempsForm />} />
           <Route path="/emploi-du-temps/:id" element={<EmploiDuTempsForm />} />
           <Route path="/fichiers" element={<FichierList />} />
+          <Route path="/presences" element={<PresenceList />} />
+          <Route path="/presences/nouveau" element={<PresenceForm />} />
+          <Route path="/presences/appel" element={<PresenceAppel />} />
+          <Route path="/presences/:id" element={<PresenceForm />} />
+          <Route path="/admin/utilisateurs" element={<AdminUsers />} />
+          <Route path="/admin/utilisateurs/nouveau" element={<AdminUserForm />} />
+          <Route path="/admin/utilisateurs/:id" element={<AdminUserForm />} />
+          <Route path="/admin/audit-logs" element={<AuditLogs />} />
         </Route>
       </Routes>
       </ToastProvider>

@@ -13,6 +13,7 @@ const links = [
   { to: '/grades', label: 'Grades' },
   { to: '/paiements', label: 'Paiements' },
   { to: '/emploi-du-temps', label: 'Emploi du temps' },
+  { to: '/presences', label: 'Présences' },
   { to: '/fichiers', label: 'Fichiers' },
 ];
 
@@ -47,6 +48,17 @@ export default function Sidebar() {
             {link.label}
           </NavLink>
         ))}
+        {user?.role === 'ROLE_ADMIN' && (
+          <>
+            <div className="sidebar-section">Administration</div>
+            <NavLink to="/admin/utilisateurs" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Utilisateurs
+            </NavLink>
+            <NavLink to="/admin/audit-logs" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Logs d'audit
+            </NavLink>
+          </>
+        )}
       </nav>
       <div className="sidebar-footer">
         <button className="btn btn-logout" onClick={handleLogout}>Déconnexion</button>

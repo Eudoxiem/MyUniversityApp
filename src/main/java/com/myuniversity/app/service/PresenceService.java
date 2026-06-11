@@ -33,6 +33,12 @@ public class PresenceService {
         this.coursRepository = coursRepository;
     }
 
+    public PresenceDTO getPresenceById(Long id) {
+        return presenceRepository.findById(id)
+                .map(PresenceDTO::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Présence introuvable"));
+    }
+
     public List<PresenceDTO> getPresencesByCoursAndDate(Long coursId, LocalDate date) {
         return presenceRepository.findByCoursIdAndDateOrderByEtudiantNom(coursId, date).stream()
                 .map(PresenceDTO::fromEntity)

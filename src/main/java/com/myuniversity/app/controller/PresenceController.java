@@ -26,6 +26,12 @@ public class PresenceController {
         this.presenceService = presenceService;
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR', 'ETUDIANT')")
+    public PresenceDTO getById(@PathVariable Long id) {
+        return presenceService.getPresenceById(id);
+    }
+
     @GetMapping("/cours/{coursId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSEUR')")
     public List<PresenceDTO> getByCoursAndDate(
