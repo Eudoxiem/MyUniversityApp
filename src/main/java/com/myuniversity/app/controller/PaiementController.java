@@ -3,6 +3,7 @@ package com.myuniversity.app.controller;
 import com.myuniversity.app.dto.PaiementDTO;
 import com.myuniversity.app.dto.paiement.PaymentIntentResponse;
 import com.myuniversity.app.entity.Paiement;
+import com.myuniversity.app.entity.User;
 import com.myuniversity.app.service.OnlinePaymentService;
 import com.myuniversity.app.service.PaiementService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -89,7 +91,7 @@ public class PaiementController {
     }
 
     @PostMapping("/{id}/payer-en-ligne")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ETUDIANT')")
+    @PreAuthorize("hasAnyRole('ADMIN') or @securityHelper.estProprietairePaiement(#id)")
     public ResponseEntity<PaymentIntentResponse> initierPaiementEnLigne(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(onlinePaymentService.initierPaiement(id));
@@ -100,9 +102,12 @@ public class PaiementController {
 
     @PostMapping("/confirmer-paiement")
     @PreAuthorize("hasAnyRole('ADMIN', 'ETUDIANT')")
-    public ResponseEntity<PaiementDTO> confirmerPaiement(@RequestParam String paymentIntentId) {
+    public ResponseEntity<PaiementDTO> confirmerPaiement(@RequestParam String paymentIntentId,
+                                                         Authentication authentication) {
         try {
-            Paiement paiement = onlinePaymentService.confirmerPaiement(paymentIntentId);
+            String email = authentication != null && authentication.getPrincipal() instanceof User u
+                    ? u.getEmail() : null;
+            Paiement paiement = onlinePaymentService.confirmerPaiement(paymentIntentId, email);
             return ResponseEntity.ok(PaiementDTO.fromEntity(paiement));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

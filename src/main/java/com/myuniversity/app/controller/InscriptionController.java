@@ -84,8 +84,10 @@ public class InscriptionController {
         Inscription inscription = new Inscription();
         inscription.setId(dto.getId());
         inscription.setDateInscription(dto.getDateInscription());
-        etudiantRepository.findById(dto.getEtudiantId()).ifPresent(inscription::setEtudiant);
-        coursRepository.findById(dto.getCoursId()).ifPresent(inscription::setCours);
+        inscription.setEtudiant(etudiantRepository.findById(dto.getEtudiantId())
+                .orElseThrow(() -> new RuntimeException("Étudiant non trouvé avec l'id : " + dto.getEtudiantId())));
+        inscription.setCours(coursRepository.findById(dto.getCoursId())
+                .orElseThrow(() -> new RuntimeException("Cours non trouvé avec l'id : " + dto.getCoursId())));
         return inscription;
     }
 }

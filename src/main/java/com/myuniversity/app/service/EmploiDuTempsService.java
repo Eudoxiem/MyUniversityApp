@@ -69,9 +69,17 @@ public class EmploiDuTempsService {
         return edtRepository.findById(id)
                 .map(existing -> {
                     edt.setId(id);
-                    edt.setCours(existing.getCours());
-                    edt.setSalle(existing.getSalle());
-                    edt.setProfesseur(existing.getProfesseur());
+                    Salle salle = edt.getSalle() != null ? edt.getSalle() : existing.getSalle();
+                    Professeur professeur = edt.getProfesseur() != null ? edt.getProfesseur() : existing.getProfesseur();
+                    JourSemaine jour = edt.getJourSemaine() != null ? edt.getJourSemaine() : existing.getJourSemaine();
+                    LocalTime heureDebut = edt.getHeureDebut() != null ? edt.getHeureDebut() : existing.getHeureDebut();
+                    LocalTime heureFin = edt.getHeureFin() != null ? edt.getHeureFin() : existing.getHeureFin();
+                    String semestre = edt.getSemestre() != null ? edt.getSemestre() : existing.getSemestre();
+                    String anneeAcademique = edt.getAnneeAcademique() != null ? edt.getAnneeAcademique() : existing.getAnneeAcademique();
+                    verifierConflits(salle.getId(), professeur.getId(), jour, heureDebut, heureFin, semestre, anneeAcademique);
+                    if (edt.getCours() == null) edt.setCours(existing.getCours());
+                    if (edt.getSalle() == null) edt.setSalle(existing.getSalle());
+                    if (edt.getProfesseur() == null) edt.setProfesseur(existing.getProfesseur());
                     return edtRepository.save(edt);
                 })
                 .orElseThrow(() -> new RuntimeException("Créneau non trouvé avec l'id : " + id));
@@ -84,6 +92,9 @@ public class EmploiDuTempsService {
     private void verifierConflits(Long salleId, Long professeurId, JourSemaine jour,
                                    LocalTime heureDebut, LocalTime heureFin,
                                    String semestre, String anneeAcademique) {
+        if (heureDebut != null && heureFin != null && !heureDebut.isBefore(heureFin)) {
+            throw new RuntimeException("L'heure de début doit être antérieure à l'heure de fin");
+        }
         List<EmploiDuTemps> conflitsSalle = edtRepository.findConflitsSalle(
                 salleId, jour, heureDebut, heureFin, semestre, anneeAcademique);
         if (!conflitsSalle.isEmpty()) {

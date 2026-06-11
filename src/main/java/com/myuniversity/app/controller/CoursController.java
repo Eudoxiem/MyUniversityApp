@@ -88,12 +88,12 @@ public class CoursController {
         cours.setCredits(dto.getCredits());
         cours.setDescription(dto.getDescription());
         if (dto.getProfesseurId() != null) {
-            professeurRepository.findById(dto.getProfesseurId())
-                    .ifPresent(cours::setProfesseur);
+            cours.setProfesseur(professeurRepository.findById(dto.getProfesseurId())
+                    .orElseThrow(() -> new RuntimeException("Professeur non trouvé avec l'id : " + dto.getProfesseurId())));
         }
         if (dto.getSalleId() != null) {
-            salleRepository.findById(dto.getSalleId())
-                    .ifPresent(cours::setSalle);
+            cours.setSalle(salleRepository.findById(dto.getSalleId())
+                    .orElseThrow(() -> new RuntimeException("Salle non trouvée avec l'id : " + dto.getSalleId())));
         }
         return cours;
     }

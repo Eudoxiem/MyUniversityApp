@@ -8,12 +8,14 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.myuniversity.app.entity.*;
 import com.myuniversity.app.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class PdfExportService {
 
     private final EtudiantRepository etudiantRepository;

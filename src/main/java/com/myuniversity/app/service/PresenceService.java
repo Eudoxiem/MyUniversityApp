@@ -94,7 +94,7 @@ public class PresenceService {
                             .build());
 
             presence.setPresent(p.isPresent());
-            if (!p.isPresent() && presence.getJustification() == null) {
+            if (p.isPresent()) {
                 presence.setJustifie(false);
                 presence.setJustification(null);
             }

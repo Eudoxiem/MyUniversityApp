@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -20,6 +22,7 @@ public class AuditService {
         this.auditLogRepository = auditLogRepository;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void log(String action, String email, String details) {
         AuditLog auditLog = AuditLog.builder()
                 .action(action)

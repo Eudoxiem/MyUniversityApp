@@ -84,7 +84,8 @@ public class NoteController {
         note.setCoefficient(dto.getCoefficient());
         note.setType(dto.getType());
         note.setDateSaisie(dto.getDateSaisie());
-        inscriptionRepository.findById(dto.getInscriptionId()).ifPresent(note::setInscription);
+        note.setInscription(inscriptionRepository.findById(dto.getInscriptionId())
+                .orElseThrow(() -> new RuntimeException("Inscription non trouvée avec l'id : " + dto.getInscriptionId())));
         return note;
     }
 }

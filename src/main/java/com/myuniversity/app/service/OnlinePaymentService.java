@@ -48,7 +48,7 @@ public class OnlinePaymentService {
 
         try {
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(paiement.getMontant().longValue() * 100)
+                    .setAmount((long) Math.round(paiement.getMontant() * 100))
                     .setCurrency("eur")
                     .putMetadata("paiement_id", paiementId.toString())
                     .putMetadata("reference", paiement.getReference())
@@ -71,7 +71,7 @@ public class OnlinePaymentService {
         }
     }
 
-    public Paiement confirmerPaiement(String paymentIntentId) {
+    public Paiement confirmerPaiement(String paymentIntentId, String currentUserEmail) {
         try {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
 
@@ -83,6 +83,10 @@ public class OnlinePaymentService {
 
                 Paiement paiement = paiementRepository.findById(Long.parseLong(paiementIdStr))
                         .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+
+                if (currentUserEmail != null && !paiement.getEtudiant().getEmail().equals(currentUserEmail)) {
+                    throw new RuntimeException("Ce paiement ne vous appartient pas");
+                }
 
                 paiement.setStatut(StatutPaiement.PAYE);
                 paiement.setDatePaiement(LocalDate.now());
@@ -106,7 +110,7 @@ public class OnlinePaymentService {
                 .paymentIntentId(paymentIntentId)
                 .clientSecret(clientSecret)
                 .paiementId(paiement.getId())
-                .montant(paiement.getMontant().longValue())
+                .montant((long) Math.round(paiement.getMontant()))
                 .statut(paiement.getStatut().name())
                 .build();
     }

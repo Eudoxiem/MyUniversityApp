@@ -113,9 +113,24 @@ class EmploiDuTempsServiceTest {
 
     @Test
     void update_whenExists_shouldReturnUpdated() {
-        EmploiDuTemps existing = EmploiDuTemps.builder().id(1L).build();
-        EmploiDuTemps updated = EmploiDuTemps.builder().id(1L).semestre("S2").build();
+        Salle salle = Salle.builder().id(1L).build();
+        Professeur professeur = Professeur.builder().id(1L).build();
+        EmploiDuTemps existing = EmploiDuTemps.builder()
+                .id(1L).salle(salle).professeur(professeur)
+                .jourSemaine(JourSemaine.LUNDI)
+                .heureDebut(LocalTime.of(8, 0)).heureFin(LocalTime.of(10, 0))
+                .semestre("S1").anneeAcademique("2025-2026")
+                .build();
+        EmploiDuTemps updated = EmploiDuTemps.builder()
+                .id(1L).semestre("S2")
+                .jourSemaine(JourSemaine.LUNDI)
+                .heureDebut(LocalTime.of(8, 0)).heureFin(LocalTime.of(10, 0))
+                .build();
         when(edtRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(edtRepository.findConflitsSalle(any(), any(), any(), any(), any(), any()))
+                .thenReturn(List.of());
+        when(edtRepository.findConflitsProfesseur(any(), any(), any(), any(), any(), any()))
+                .thenReturn(List.of());
         when(edtRepository.save(updated)).thenReturn(updated);
 
         EmploiDuTemps result = service.update(1L, updated);

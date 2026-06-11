@@ -70,6 +70,7 @@ public class PaiementDTO {
                 .modePaiement(modePaiement)
                 .statut(statut)
                 .description(description)
+                .paymentIntentId(paymentIntentId)
                 .build();
     }
 }

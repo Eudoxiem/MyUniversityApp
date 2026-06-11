@@ -83,7 +83,8 @@ public class GradeController {
         grade.setValeurFinale(dto.getValeurFinale());
         grade.setMention(dto.getMention());
         grade.setDateValidation(dto.getDateValidation());
-        inscriptionRepository.findById(dto.getInscriptionId()).ifPresent(grade::setInscription);
+        grade.setInscription(inscriptionRepository.findById(dto.getInscriptionId())
+                .orElseThrow(() -> new RuntimeException("Inscription non trouvée avec l'id : " + dto.getInscriptionId())));
         return grade;
     }
 }

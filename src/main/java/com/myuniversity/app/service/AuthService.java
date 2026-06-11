@@ -147,14 +147,6 @@ public class AuthService {
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
-        if (user == null) {
-            user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> {
-                        log.warn("Utilisateur non trouvé après authentification - email: {}", request.getEmail());
-                        return new RuntimeException("Email ou mot de passe incorrect");
-                    });
-        }
-
         user.setTentativesEchouees(0);
         user.setDateVerrouillage(null);
         userRepository.save(user);

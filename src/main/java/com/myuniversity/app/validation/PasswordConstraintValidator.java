@@ -3,13 +3,15 @@ package com.myuniversity.app.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+import java.util.regex.Pattern;
+
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
     private static final int MIN_LENGTH = 8;
-    private static final String UPPERCASE_PATTERN = ".*[A-Z].*";
-    private static final String LOWERCASE_PATTERN = ".*[a-z].*";
-    private static final String DIGIT_PATTERN = ".*\\d.*";
-    private static final String SPECIAL_PATTERN = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?`~].*";
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile(".*[A-Z].*");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile(".*[a-z].*");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
+    private static final Pattern SPECIAL_PATTERN = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?`~].*");
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
@@ -18,10 +20,10 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         }
 
         boolean isValid = password.length() >= MIN_LENGTH
-                && password.matches(UPPERCASE_PATTERN)
-                && password.matches(LOWERCASE_PATTERN)
-                && password.matches(DIGIT_PATTERN)
-                && password.matches(SPECIAL_PATTERN);
+                && UPPERCASE_PATTERN.matcher(password).matches()
+                && LOWERCASE_PATTERN.matcher(password).matches()
+                && DIGIT_PATTERN.matcher(password).matches()
+                && SPECIAL_PATTERN.matcher(password).matches();
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();

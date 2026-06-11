@@ -5,6 +5,7 @@ import com.myuniversity.app.repository.EtudiantRepository;
 import com.myuniversity.app.repository.InscriptionRepository;
 import com.myuniversity.app.repository.NoteRepository;
 import com.myuniversity.app.repository.PaiementRepository;
+import com.myuniversity.app.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,18 @@ import org.springframework.stereotype.Component;
 @Component("securityHelper")
 public class SecurityHelper {
 
+    private final UserRepository userRepository;
     private final EtudiantRepository etudiantRepository;
     private final InscriptionRepository inscriptionRepository;
     private final NoteRepository noteRepository;
     private final PaiementRepository paiementRepository;
 
-    public SecurityHelper(EtudiantRepository etudiantRepository,
+    public SecurityHelper(UserRepository userRepository,
+                          EtudiantRepository etudiantRepository,
                           InscriptionRepository inscriptionRepository,
                           NoteRepository noteRepository,
                           PaiementRepository paiementRepository) {
+        this.userRepository = userRepository;
         this.etudiantRepository = etudiantRepository;
         this.inscriptionRepository = inscriptionRepository;
         this.noteRepository = noteRepository;
@@ -71,8 +75,11 @@ public class SecurityHelper {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) return null;
         Object principal = auth.getPrincipal();
-        if (principal instanceof User) {
-            return ((User) principal).getEmail();
+        if (principal instanceof User u) {
+            return u.getEmail();
+        }
+        if (principal instanceof String email) {
+            return email;
         }
         return null;
     }
