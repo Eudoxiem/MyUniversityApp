@@ -4,6 +4,7 @@ import { useToast } from './Toast';
 
 const links = [
   { to: '/', label: 'Tableau de bord' },
+  { to: '/profile', label: 'Mon Profil' },
   { to: '/etudiants', label: 'Étudiants' },
   { to: '/professeurs', label: 'Professeurs' },
   { to: '/cours', label: 'Cours' },

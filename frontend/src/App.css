@@ -535,3 +535,95 @@ table tr:hover {
   color: #999;
   font-size: 0.85rem;
 }
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #1a237e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.profile-info {
+  width: 100%;
+  max-width: 400px;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-label {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.profile-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.profile-role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: #e8eaf6;
+  color: #1a237e;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-form-title {
+  font-size: 1.2rem;
+  color: #1a237e;
+  margin-bottom: 20px;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: #333;
+}

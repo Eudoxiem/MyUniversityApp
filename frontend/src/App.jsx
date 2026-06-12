@@ -27,6 +27,7 @@ import FichierList from './pages/Fichiers/FichierList';
 import PresenceList from './pages/Presences/PresenceList';
 import PresenceForm from './pages/Presences/PresenceForm';
 import PresenceAppel from './pages/Presences/PresenceAppel';
+import ProfilePage from './pages/Profile/ProfilePage';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminUserForm from './pages/Admin/AdminUserForm';
 import AuditLogs from './pages/Admin/AuditLogs';
@@ -79,6 +80,7 @@ export default function App() {
           <Route path="/emploi-du-temps" element={<EmploiDuTempsList />} />
           <Route path="/emploi-du-temps/nouveau" element={<EmploiDuTempsForm />} />
           <Route path="/emploi-du-temps/:id" element={<EmploiDuTempsForm />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/fichiers" element={<FichierList />} />
           <Route path="/presences" element={<PresenceList />} />
           <Route path="/presences/nouveau" element={<PresenceForm />} />
