@@ -5,6 +5,9 @@ import { useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
+import ForgotPasswordPage from './pages/Auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
+import EmailVerifyPage from './pages/Auth/EmailVerifyPage';
 import EtudiantList from './pages/Etudiants/EtudiantList';
 import EtudiantForm from './pages/Etudiants/EtudiantForm';
 import ProfesseurList from './pages/Professeurs/ProfesseurList';
@@ -51,6 +54,9 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
+        <Route path="/verify" element={<PublicRoute><EmailVerifyPage /></PublicRoute>} />
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/etudiants" element={<EtudiantList />} />

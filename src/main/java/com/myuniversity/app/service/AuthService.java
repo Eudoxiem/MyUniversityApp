@@ -94,7 +94,7 @@ public class AuthService {
                 .build();
         verificationTokenRepository.save(verificationToken);
 
-        String lien = "http://localhost:8443/api/auth/verify?token=" + verificationToken.getToken();
+        String lien = "http://localhost:5173/verify?token=" + verificationToken.getToken();
         emailService.envoyerEmail(
                 user.getEmail(),
                 "Vérification de votre email - MyUniversityApp",
@@ -238,7 +238,7 @@ public class AuthService {
                     .build();
             passwordResetTokenRepository.save(prt);
 
-            String lien = "http://localhost:8443/reset-password?token=" + prt.getToken();
+            String lien = "http://localhost:5173/reset-password?token=" + prt.getToken();
             emailService.envoyerEmail(
                     user.getEmail(),
                     "Réinitialisation de mot de passe - MyUniversityApp",
@@ -303,7 +303,7 @@ public class AuthService {
                 .build();
         verificationTokenRepository.save(vt);
 
-        String lien = "http://localhost:8443/api/auth/verify?token=" + vt.getToken();
+        String lien = "http://localhost:5173/verify?token=" + vt.getToken();
         emailService.envoyerEmail(
                 user.getEmail(),
                 "Nouveau lien de vérification - MyUniversityApp",
