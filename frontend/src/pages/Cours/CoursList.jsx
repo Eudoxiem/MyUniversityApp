@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCours, deleteCour } from '../../api/cours';
+import { exportListeEtudiants } from '../../api/export';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
+import { useToast } from '../../components/Toast';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -13,6 +15,7 @@ export default function CoursList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const fetchData = () => {
     setLoading(true);
@@ -71,6 +74,7 @@ export default function CoursList() {
                     <td>{c.professeurNom || c.professeurId}</td>
                     <td>{c.salleNom || c.salleId}</td>
                     <td className="actions">
+                      <button className="btn btn-primary" onClick={() => exportListeEtudiants(c.id).catch(() => toast('Erreur lors de l\'export de la liste'))}>Liste</button>
                       <button className="btn btn-warning" onClick={() => navigate(`/cours/${c.id}`)}>Modifier</button>
                       <button className="btn btn-danger" onClick={() => handleDelete(c.id)}>Supprimer</button>
                     </td>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getPaiements, deletePaiement } from '../../api/paiements';
+import { exportRecuPaiement } from '../../api/export';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
+import { useToast } from '../../components/Toast';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,6 +19,7 @@ export default function PaiementList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const fetchData = () => {
     setLoading(true);
@@ -77,6 +80,7 @@ export default function PaiementList() {
                     <td>{modeLabels[p.modePaiement] || p.modePaiement}</td>
                     <td><span className="statut-badge" style={{ background: statutColors[p.statut] }}>{statutLabels[p.statut] || p.statut}</span></td>
                     <td className="actions">
+                      <button className="btn btn-primary" onClick={() => exportRecuPaiement(p.id).catch(() => toast('Erreur lors de l\'export du reçu'))}>Reçu</button>
                       <button className="btn btn-warning" onClick={() => navigate(`/paiements/${p.id}`)}>Modifier</button>
                       <button className="btn btn-danger" onClick={() => handleDelete(p.id)}>Supprimer</button>
                     </td>

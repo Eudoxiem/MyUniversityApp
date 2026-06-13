@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getEtudiants, deleteEtudiant } from '../../api/etudiants';
+import { exportBulletin } from '../../api/export';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
+import { useToast } from '../../components/Toast';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -13,6 +15,7 @@ export default function EtudiantList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const fetchEtudiants = () => {
     setLoading(true);
@@ -71,6 +74,7 @@ export default function EtudiantList() {
                     <td>{e.email}</td>
                     <td>{e.telephone}</td>
                     <td className="actions">
+                      <button className="btn btn-primary" onClick={() => exportBulletin(e.id).catch(() => toast('Erreur lors de l\'export du bulletin'))}>Bulletin</button>
                       <button className="btn btn-warning" onClick={() => navigate(`/etudiants/${e.id}`)}>Modifier</button>
                       <button className="btn btn-danger" onClick={() => handleDelete(e.id)}>Supprimer</button>
                     </td>
