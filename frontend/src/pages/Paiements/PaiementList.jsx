@@ -4,13 +4,14 @@ import { getPaiements, deletePaiement } from '../../api/paiements';
 import { exportRecuPaiement } from '../../api/export';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
+import PaiementEnLigneModal from '../../components/PaiementEnLigneModal';
 import { useToast } from '../../components/Toast';
 
 const ITEMS_PER_PAGE = 10;
 
 const statutLabels = { EN_ATTENTE: 'En attente', PAYE: 'Payé', EN_RETARD: 'En retard', ANNULE: 'Annulé' };
 const statutColors = { EN_ATTENTE: '#f57f17', PAYE: '#2e7d32', EN_RETARD: '#c62828', ANNULE: '#757575' };
-const modeLabels = { ESPECES: 'Espèces', VIREMENT: 'Virement', CHEQUE: 'Chèque', CARTE_BANCAIRE: 'Carte bancaire' };
+const modeLabels = { ESPECES: 'Espèces', VIREMENT: 'Virement', CHEQUE: 'Chèque', CARTE_BANCAIRE: 'Carte bancaire', CARTE_EN_LIGNE: 'Carte en ligne' };
 
 export default function PaiementList() {
   const [paiements, setPaiements] = useState([]);
@@ -18,6 +19,7 @@ export default function PaiementList() {
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [onlinePayment, setOnlinePayment] = useState(null);
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -80,6 +82,9 @@ export default function PaiementList() {
                     <td>{modeLabels[p.modePaiement] || p.modePaiement}</td>
                     <td><span className="statut-badge" style={{ background: statutColors[p.statut] }}>{statutLabels[p.statut] || p.statut}</span></td>
                     <td className="actions">
+                      {p.statut === 'EN_ATTENTE' && (
+                        <button className="btn btn-success" onClick={() => setOnlinePayment(p)}>Payer</button>
+                      )}
                       <button className="btn btn-primary" onClick={() => exportRecuPaiement(p.id).catch(() => toast('Erreur lors de l\'export du reçu'))}>Reçu</button>
                       <button className="btn btn-warning" onClick={() => navigate(`/paiements/${p.id}`)}>Modifier</button>
                       <button className="btn btn-danger" onClick={() => handleDelete(p.id)}>Supprimer</button>
@@ -93,6 +98,14 @@ export default function PaiementList() {
         )}
       </div>
       <Modal open={modalOpen} title="Confirmer la suppression" message="Êtes-vous sûr de vouloir supprimer ce paiement ?" onConfirm={confirmDelete} onCancel={() => setModalOpen(false)} danger />
+
+      {onlinePayment && (
+        <PaiementEnLigneModal
+          paiement={onlinePayment}
+          onClose={() => setOnlinePayment(null)}
+          onPaid={fetchData}
+        />
+      )}
     </div>
   );
 }

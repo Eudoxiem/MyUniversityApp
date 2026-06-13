@@ -2,12 +2,14 @@ package com.myuniversity.app.controller;
 
 import com.myuniversity.app.dto.PaiementDTO;
 import com.myuniversity.app.dto.paiement.PaymentIntentResponse;
+import com.myuniversity.app.dto.paiement.StripeConfigDTO;
 import com.myuniversity.app.entity.Paiement;
 import com.myuniversity.app.entity.User;
 import com.myuniversity.app.service.OnlinePaymentService;
 import com.myuniversity.app.service.PaiementService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +26,17 @@ public class PaiementController {
     private final PaiementService paiementService;
     private final OnlinePaymentService onlinePaymentService;
 
+    @Value("${stripe.publishable-key}")
+    private String stripePublishableKey;
+
     public PaiementController(PaiementService paiementService, OnlinePaymentService onlinePaymentService) {
         this.paiementService = paiementService;
         this.onlinePaymentService = onlinePaymentService;
+    }
+
+    @GetMapping("/stripe-config")
+    public ResponseEntity<StripeConfigDTO> getStripeConfig() {
+        return ResponseEntity.ok(new StripeConfigDTO(stripePublishableKey));
     }
 
     @GetMapping
